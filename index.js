@@ -38,3 +38,5 @@ const reply = (bodyResponse) => {
 
 
 app.listen(PORT)
+
+module.exports = app
