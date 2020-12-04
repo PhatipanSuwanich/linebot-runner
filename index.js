@@ -12,6 +12,7 @@ const LINE_HEADER = {
 };
 
 app.post('/lineBot', (req, res) => {
+    console.log(req.body)
     if (req.body.events[0].message.type !== 'text') {
         return;
     }
@@ -38,5 +39,3 @@ const reply = (bodyResponse) => {
 
 
 app.listen(PORT)
-
-module.exports = app
