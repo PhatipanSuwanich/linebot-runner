@@ -23,7 +23,8 @@ app.post('/lineBot', (req, res) => {
         case 'message':
             // วันนี้ บันทึก 10000
             // เมื่อวาน บันทึก 10000
-            let textArray = event.message.text.split(" ");
+            let textArray = event.message.text;
+            textArray = textArray.split(" ");
             console.log(textArray)
             if (textArray[1].equals("บันทึก")) {
                 saveStep(event.replyToken, textArray[2], textArray[0]);
