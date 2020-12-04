@@ -26,7 +26,7 @@ app.post('/lineBot', (req, res) => {
             let textArray = event.message.text;
             textArray = textArray.split(" ");
             console.log(textArray)
-            if (textArray[1].equals("บันทึก")) {
+            if (textArray[1] === "บันทึก") {
                 saveStep(event.replyToken, textArray[2], textArray[0]);
             } else if (textArray[0].startsWith("สรุปผล")) {
                 reply(event.replyToken, textArray)
