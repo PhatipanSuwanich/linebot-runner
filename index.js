@@ -17,7 +17,7 @@ app.post('/lineBot', (req, res) => {
     console.log(req.body)
     let event = req.body.events[0];
     switch (event.type) {
-        case 'text':
+        case 'message':
             let callbot = event.message.text;
             if (callbot.startsWith("bot")) {
                 let text = callbot.replace("bot ", "")
