@@ -1,6 +1,6 @@
 const express = require('express')
 const axios = require('axios');
-
+const bodyParser = require('body-parser')
 const app = express()
 
 const PORT = process.env.PORT || 8080
@@ -10,6 +10,8 @@ const LINE_HEADER = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer 7MxMoId+Cf9MJNaQr+YMexcez9Q/5+SLjHpCOmMhnDGI4nLKQGiz/Ch7cVSf6VYn+/Mgqc7UA4bysVs8qIFT+Qi5oWWZZpoi6p4Wr+CEx3c0575W+ksZ5ssBfZPMerTWl0LIRmtC/QyyzOFaGCbJLAdB04t89/1O/w1cDnyilFU=`
 };
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 app.post('/lineBot', (req, res) => {
     console.log(req.body)
