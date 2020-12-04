@@ -29,7 +29,7 @@ app.post('/lineBot', (req, res) => {
             if (textArray[1] === "บันทึก") {
                 saveStep(event.replyToken, textArray[2], textArray[0]);
             } else if (textArray[0].startsWith("สรุปผล")) {
-                reply(event.replyToken, textArray)
+                reply(event.replyToken, textArray[0])
             }
             break;
         default:
@@ -58,9 +58,9 @@ const reply = (to, text_reply) => {
 const saveStep = (to, text_reply, date) => {
     let timer = moment().tz("Asia/Bangkok");
     console.log(timer.format('DD MM YYYY'))
-    if (date.equals("เมื่อวาน")) {
+    if (date === "เมื่อวาน") {
         timer.subtract(1, 'days').calendar();
-    } else if (date.equals("วันนี้")) {
+    } else if (date === "วันนี้") {
         timer.calendar();
     }
     console.log(timer)
