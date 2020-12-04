@@ -15,24 +15,37 @@ app.use(bodyParser.json())
 
 app.post('/lineBot', (req, res) => {
     console.log(req.body)
-    if (req.body.events[0].message.type !== 'text') {
-        return;
+    let event = req.body.events[0];
+    switch (event.type) {
+        case 'text':
+            let callbot = event.message.text;
+            if (callbot.startsWith("bot")) {
+                let text = callbot.replace("bot ", "")
+                console.log(text)
+                reply(event.replyToken, text);
+            } else if (callbot.startsWith("บอต")) {
+                let text = callbot.replace("บอต ", "")
+                console.log(text)
+                reply(event.replyToken, text);
+            } 
+            break;
+        default:
+            break;
     }
-    reply(req.body);
     res.sendStatus(200)
-})
 
-const reply = (bodyResponse) => {
+
+const reply = (to, text_reply) => {
     return axios({
         method: 'post',
         url: `${LINE_MESSAGING_API}/reply`,
         headers: LINE_HEADER,
         data: JSON.stringify({
-            replyToken: bodyResponse.events[0].replyToken,
+            replyToken: to,
             messages: [
                 {
                     type: `text`,
-                    text: bodyResponse.events[0].message.text
+                    text: text_reply
                 }
             ]
         })
