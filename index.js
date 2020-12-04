@@ -25,9 +25,9 @@ app.post('/lineBot', (req, res) => {
 const reply = (bodyResponse) => {
     return axios({
         method: 'post',
-        uri: `${LINE_MESSAGING_API}/reply`,
+        url: `${LINE_MESSAGING_API}/reply`,
         headers: LINE_HEADER,
-        body: JSON.stringify({
+        data: JSON.stringify({
             replyToken: bodyResponse.events[0].replyToken,
             messages: [
                 {
