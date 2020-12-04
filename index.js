@@ -27,13 +27,13 @@ app.post('/lineBot', (req, res) => {
                 let text = callbot.replace("บอต ", "")
                 console.log(text)
                 reply(event.replyToken, text);
-            } 
+            }
             break;
         default:
             break;
     }
     res.sendStatus(200)
-
+})
 
 const reply = (to, text_reply) => {
     return axios({
