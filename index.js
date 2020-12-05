@@ -30,17 +30,18 @@ app.post('/lineBot', (req, res) => {
                 let step = parseInt(textArray[1]);
                 console.log(step)
                 if (Number.isInteger(step)) {
-                    console.log(Number.isInteger(step))
-                    quickConfirm(event.replyToken, textArray[1]);
+                    quickConfirm(event.replyToken, step.toString(),"step");
                 } else {
                     reply(event.replyToken, "กรุณากรอก `step จำนวนก้าว` ครับ");
                 }
-            } else if (textArray[0].startsWith("สรุปผล")) {
-                console.log(step)
+            } else if (textArray[0] === "add" || textArray[0] === "Add") {
+                quickConfirm(event.replyToken, textArray[1],"add")
+            } else if (textArray[0] === "report" || textArray[0] === "Report") {
                 reply(event.replyToken, textArray[0])
             }
             break;
         case 'postback':
+            console.log(JSON.parse(req.body))
             console.log(event.postback)
             let data = JSON.parse(event.postback.data)
             reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
@@ -76,6 +77,29 @@ const callDate = (date) => {
     }
 
     return `${timer.format('DD/MM/YYYY')}`
+};
+
+const getTeam = () => {
+    const team_name = ['1', '2', '3', '4', '5', '6']
+    let all_team_json = [];
+    team_name.forEach(name => {
+        all_team_json.push({
+            type: "action",
+            action: {
+                type: "postback",
+                label: `Team-${name}`,
+                data: JSON.stringify({
+                    team: `Team-${name}`,
+                    name: text_reply,
+                }),
+                displayText: `ขอเข้าทีม ${name} หน่อยนะ`
+            }
+        })
+    });
+
+    console.log(all_team_json)
+
+    return all_team_json;
 };
 
 const confirmMessage = (to, text_reply) => {
@@ -119,50 +143,61 @@ const confirmMessage = (to, text_reply) => {
     })
 };
 
-const quickConfirm = (to, text_reply) => {
-    return axios({
-        method: "post",
-        url: `${LINE_MESSAGING_API}/reply`,
-        headers: LINE_HEADER,
-        data: JSON.stringify({
-            replyToken: to,
-            messages: [
+const quickConfirm = (to, text_reply, channel) => {
+    let quick_item
+    if (channel === 'step') {
+        quick_item = {
+            items: [
                 {
-                    type: "text",
-                    text: `คุณต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`,
-                    quickReply: {
-                        items: [
-                            {
-                                type: "action",
-                                action: {
-                                    type: "postback",
-                                    label: "วันนี้",
-                                    data: JSON.stringify({
-                                        date: `${callDate("วันนี้")}`,
-                                        step: text_reply,
-                                    }),
-                                    displayText: "นับก้าวของวันนี้"
-                                }
-                            },
-                            {
-                                type: "action",
-                                action: {
-                                    type: "postback",
-                                    label: "เมื่อวาน",
-                                    data: JSON.stringify({
-                                        date: `${callDate("เมื่อวาน")}`,
-                                        step: text_reply,
-                                    }),
-                                    displayText: "นับก้าวของเมื่อวาน"
-                                }
-                            },
-                        ]
+                    type: "action",
+                    action: {
+                        type: "postback",
+                        label: "วันนี้",
+                        data: JSON.stringify({
+                            date: `${callDate("วันนี้")}`,
+                            step: text_reply,
+                        }),
+                        displayText: "นับก้าวของวันนี้"
                     }
-                }
+                },
+                {
+                    type: "action",
+                    action: {
+                        type: "postback",
+                        label: "เมื่อวาน",
+                        data: JSON.stringify({
+                            date: `${callDate("เมื่อวาน")}`,
+                            step: text_reply,
+                        }),
+                        displayText: "นับก้าวของเมื่อวาน"
+                    }
+                },
             ]
+        }
+    } else if (channel === 'add') {
+        {
+            quick_item = {
+                items: getTeam()
+            }
+        }
+
+
+        return axios({
+            method: "post",
+            url: `${LINE_MESSAGING_API}/reply`,
+            headers: LINE_HEADER,
+            data: JSON.stringify({
+                replyToken: to,
+                messages: [
+                    {
+                        type: "text",
+                        text: `คุณต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`,
+                        quickReply: quick_item
+                    }
+                ]
+            })
         })
-    })
-};
+    };
+}
 
-
-app.listen(PORT)
+    app.listen(PORT)
