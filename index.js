@@ -47,10 +47,14 @@ app.post('/lineBot', async (req, res) => {
                 // add name
                 quickConfirm(event.replyToken, textArray[1], "add")
             } else if (textArray[0] === "report" || textArray[0] === "Report") {
-                const querySnapshot = await db.collection('counting').where('team', '==', 'ทีมพี่กมล').get();
+                let name,step;
+                const querySnapshot = await db.collection('counting').where('team', '==', 'ทีมพี่กมล').where('date', '==', callDate("วันนี้")).get();
                 querySnapshot.forEach((doc) => {
-                    console.log(doc.id, ' => ', doc.data());
+                    console.log(doc.id, ' => ', doc.data())
+                    name = doc.data().name
+                    step = doc.data().step
                 });
+                reply(event.replyToken,`วันนี้ ${name} เดินไป ${step} ก้าว`)
             }
             break;
         case 'postback':
