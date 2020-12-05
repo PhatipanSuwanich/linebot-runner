@@ -16,18 +16,24 @@ moment.locale('th')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
+let step;
+
 app.post('/lineBot', (req, res) => {
     console.log(req.body)
     let event = req.body.events[0];
     switch (event.type) {
         case 'message':
-            // วันนี้ บันทึก 10000
-            // เมื่อวาน บันทึก 10000
+            // step 10000
             let textArray = event.message.text;
             textArray = textArray.split(" ");
             console.log(textArray)
-            if (textArray[1] === "บันทึก") {
-                saveStep(event.replyToken, textArray[2], textArray[0]);
+            if (textArray[0] === "step" || textArray[0] === "Step") {
+                step = parseInt(textArray[1]);
+                console.log(step)
+                if (Number.isInteger(step)) {
+                    reply(event.replyToken, textArray[1]);
+                }
+                reply(event.replyToken, "กรุณากรอกเป็นตัวเลขครับ");
             } else if (textArray[0].startsWith("สรุปผล")) {
                 reply(event.replyToken, textArray[0])
             }
@@ -63,7 +69,6 @@ const saveStep = (to, text_reply, date) => {
     } else if (date === "วันนี้") {
         timer.calendar();
     }
-    console.log(timer)
     console.log(timer.format('DD MM YYYY'))
 
     return axios({
