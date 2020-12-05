@@ -47,7 +47,7 @@ app.post('/lineBot', async (req, res) => {
                 // add name
                 quickConfirm(event.replyToken, textArray[1], "add")
             } else if (textArray[0] === "report" || textArray[0] === "Report") {
-                const querySnapshot = await db.collectionGroup('counting').where('team', '==', 'ทีมพี่กมล').get();
+                const querySnapshot = await db.collection('counting').where('team', '==', 'ทีมพี่กมล').get();
                 querySnapshot.forEach((doc) => {
                     console.log(doc.id, ' => ', doc.data());
                 });
