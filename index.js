@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 app.post('/lineBot', (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     let event = req.body.events[0];
     console.log(event.source)
     switch (event.type) {
@@ -40,6 +40,11 @@ app.post('/lineBot', (req, res) => {
                 reply(event.replyToken, textArray[0])
             }
             break;
+        case 'postback':
+            console.log(event.postback)
+        // if (event.postback.data === ) {
+
+        // }
         default:
             break;
     }
@@ -92,13 +97,19 @@ const confirmMessage = (to, text_reply) => {
                             {
                                 type: "postback",
                                 label: "วันนี้",
-                                data: `date=วันนี้&step=${text_reply}`,
+                                data: JSON.stringify({
+                                    date: "วันนี้",
+                                    step: text_reply,
+                                }),
                                 displayText: `${callDate("วันนี้")}`
                             },
                             {
                                 type: "postback",
                                 label: "เมื่อวาน",
-                                data: `date=เมื่อวาน&step=${text_reply}`,
+                                data: JSON.stringify({
+                                    date: "เมื่อวาน",
+                                    step: text_reply,
+                                }),
                                 displayText: `${callDate("เมื่อวาน")}`
                             }
                         ]
@@ -106,12 +117,7 @@ const confirmMessage = (to, text_reply) => {
                 }
             ]
         })
-    }).then((value) => {
-        console.log(value)
-        return res.status(200).send("Done");
-    }).catch(error => {
-        return Promise.reject(error);
-    });
+    })
 };
 
 
