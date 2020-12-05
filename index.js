@@ -31,7 +31,7 @@ app.post('/lineBot', (req, res) => {
                 console.log(step)
                 if (Number.isInteger(step)) {
                     console.log(Number.isInteger(step))
-                    confirmMessage(event.replyToken, textArray[1]);
+                    quickConfirm(event.replyToken, textArray[1]);
                 } else {
                     reply(event.replyToken, "กรุณากรอก `step จำนวนก้าว` ครับ");
                 }
@@ -43,7 +43,7 @@ app.post('/lineBot', (req, res) => {
         case 'postback':
             console.log(event.postback)
             let data = JSON.parse(event.postback.data)
-            reply(event.replyToken,`${data.date} บันทึกจำนวน ${data.step} ก้าวแล้ว`)
+            reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
         default:
             break;
     }
@@ -75,7 +75,7 @@ const callDate = (date) => {
         timer.calendar();
     }
 
-    return `ทำการบันทึก ${timer.format('DD/MM/YYYY')}`
+    return `${timer.format('DD/MM/YYYY')}`
 };
 
 const confirmMessage = (to, text_reply) => {
@@ -111,6 +111,51 @@ const confirmMessage = (to, text_reply) => {
                                 }),
                                 displayText: "บันทึกเมื่อวาน"
                             }
+                        ]
+                    }
+                }
+            ]
+        })
+    })
+};
+
+const quickConfirm = (to, text_reply) => {
+    return axios({
+        method: "post",
+        url: `${LINE_MESSAGING_API}/reply`,
+        headers: LINE_HEADER,
+        data: JSON.stringify({
+            replyToken: to,
+            messages: [
+                {
+                    type: "text",
+                    text: "Hello Quick Reply!",
+                    quickReply: {
+                        items: [
+                            {
+                                type: "action",
+                                action: {
+                                    type: "postback",
+                                    label: "วันนี้",
+                                    data: JSON.stringify({
+                                        date: `${callDate("วันนี้")}`,
+                                        step: text_reply,
+                                    }),
+                                    displayText: "นับก้าวของวันนี้"
+                                }
+                            },
+                            {
+                                type: "action",
+                                action: {
+                                    type: "postback",
+                                    label: "เมื่อวาน",
+                                    data: JSON.stringify({
+                                        date: `${callDate("เมื่อวาน")}`,
+                                        step: text_reply,
+                                    }),
+                                    displayText: "นับก้าวของเมื่อวาน"
+                                }
+                            },
                         ]
                     }
                 }
