@@ -42,7 +42,8 @@ app.post('/lineBot', (req, res) => {
             break;
         case 'postback':
             console.log(event.postback)
-            reply(event.replyToken,`${event.postback.data.date} บันทึกจำนวน ${event.postback.data.step} ก้าวแล้ว`)
+            let data = JSON.parse(event.postback.data)
+            reply(event.replyToken,`${data.date} บันทึกจำนวน ${data.step} ก้าวแล้ว`)
         default:
             break;
     }
