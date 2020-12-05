@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const app = express()
 const admin = require('firebase-admin');
 
-const serviceAccount = require('../linebot-runner/config/linebot-runner-firebase-adminsdk-nybvm-2de4d3c017.json');
+const serviceAccount = require('./config/linebot-runner-firebase-adminsdk-nybvm-2de4d3c017.json');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
