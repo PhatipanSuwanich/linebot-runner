@@ -16,8 +16,6 @@ moment.locale('th')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-let step;
-
 app.post('/lineBot', (req, res) => {
     console.log(req.body)
     let event = req.body.events[0];
@@ -28,13 +26,16 @@ app.post('/lineBot', (req, res) => {
             textArray = textArray.split(" ");
             console.log(textArray)
             if (textArray[0] === "step" || textArray[0] === "Step") {
-                step = parseInt(textArray[1]);
+                let step = parseInt(textArray[1]);
                 console.log(step)
                 if (Number.isInteger(step)) {
-                    reply(event.replyToken, textArray[1]);
+                    console.log(Number.isInteger(step))
+                    confirmMessage(event.replyToken, textArray[1]);
+                } else {
+                    reply(event.replyToken, "กรุณากรอก `step จำนวนก้าว` ครับ");
                 }
-                reply(event.replyToken, "กรุณากรอกเป็นตัวเลขครับ");
             } else if (textArray[0].startsWith("สรุปผล")) {
+                console.log(step)
                 reply(event.replyToken, textArray[0])
             }
             break;
@@ -61,7 +62,7 @@ const reply = (to, text_reply) => {
     });
 };
 
-const saveStep = (to, text_reply, date) => {
+const callDate = (date) => {
     let timer = moment().tz("Asia/Bangkok");
     console.log(timer.format('DD MM YYYY'))
     if (date === "เมื่อวาน") {
@@ -71,19 +72,46 @@ const saveStep = (to, text_reply, date) => {
     }
     console.log(timer.format('DD MM YYYY'))
 
+    return `ทำการบันทึก ${timer.format('DD MM YYYY')}`
+};
+
+const confirmMessage = (to, text_reply) => {
     return axios({
-        method: 'post',
+        method: "post",
         url: `${LINE_MESSAGING_API}/reply`,
         headers: LINE_HEADER,
         data: JSON.stringify({
             replyToken: to,
             messages: [
                 {
-                    type: `text`,
-                    text: text_reply
+                    type: "template",
+                    altText: "This is a confirm template",
+                    template: {
+                        type: "confirm",
+                        text: `ต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`,
+                        actions: [
+                            {
+                                type: "postback",
+                                label: "วันนี้",
+                                data: `date=วันนี้&step=${text_reply}`,
+                                displayText: `${callDate("วันนี้")}`
+                            },
+                            {
+                                type: "postback",
+                                label: "เมื่อวาน",
+                                data: `date=เมื่อวาน&step=${text_reply}`,
+                                displayText: `${callDate("เมื่อวาน")}`
+                            }
+                        ]
+                    }
                 }
             ]
         })
+    }).then((value) => {
+        console.log(value)
+        return res.status(200).send("Done");
+    }).catch(error => {
+        return Promise.reject(error);
     });
 };
 
