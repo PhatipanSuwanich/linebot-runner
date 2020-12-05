@@ -55,8 +55,7 @@ app.post('/lineBot', async (req, res) => {
             let data = JSON.parse(event.postback.data)
             if (data.channel === 'step') {
                 const runnerRef = db.collection('runner').doc(event.source.userId);
-                runnerRef.get()
-                const doc = await cityRef.get();
+                const doc = await runnerRef.get();
                 if (!doc.exists) {
                     reply(event.replyToken, 'คุณยังไม่ได้ทำการลงทะเบียนเป็นนักวิ่ง');
                 } else {
