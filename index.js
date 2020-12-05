@@ -42,9 +42,7 @@ app.post('/lineBot', (req, res) => {
             break;
         case 'postback':
             console.log(event.postback)
-        // if (event.postback.data === ) {
-
-        // }
+            reply(event.replyToken,`${event.postback.data.date} บันทึกจำนวน ${event.postback.data.step} ก้าวแล้ว`)
         default:
             break;
     }
@@ -98,19 +96,19 @@ const confirmMessage = (to, text_reply) => {
                                 type: "postback",
                                 label: "วันนี้",
                                 data: JSON.stringify({
-                                    date: "วันนี้",
+                                    date: `${callDate("วันนี้")}`,
                                     step: text_reply,
                                 }),
-                                displayText: `${callDate("วันนี้")}`
+                                displayText: "บันทึกวันนี้"
                             },
                             {
                                 type: "postback",
                                 label: "เมื่อวาน",
                                 data: JSON.stringify({
-                                    date: "เมื่อวาน",
+                                    date: `${callDate("เมื่อวาน")}`,
                                     step: text_reply,
                                 }),
-                                displayText: `${callDate("เมื่อวาน")}`
+                                displayText: "บันทึกเมื่อวาน"
                             }
                         ]
                     }
