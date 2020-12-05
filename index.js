@@ -54,25 +54,7 @@ app.post('/lineBot', async (req, res) => {
             console.log(event.postback)
             let data = JSON.parse(event.postback.data)
             if (data.channel === 'step') {
-                const runnerRef = db.collection('runner').doc(event.source.userId);
-                const doc = await runnerRef.get();
-                if (!doc.exists) {
-                    reply(event.replyToken, 'คุณยังไม่ได้ทำการลงทะเบียนเป็นนักวิ่ง');
-                } else {
-                    console.log('Document data:', doc.data());
-                    let runner_db = doc.data();
-                    db.collection("counting").add({
-                        date: data.date,
-                        step: data.step,
-                        team: runner_db.team,
-                        name: runner_db.name,
-                    }).then(function () {
-                        reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
-                    }).catch(err => {
-                        console.log(err)
-                        reply(event.replyToken, 'การบันทึกมีปัญหา');
-                    });
-                }
+                await addToCounting(data)
             } else if (data.channel === 'team') {
                 console.log(event.postback.data)
                 db.collection("runner").doc(event.source.userId).set({
@@ -92,6 +74,30 @@ app.post('/lineBot', async (req, res) => {
     }
     res.sendStatus(200)
 })
+
+const addToCounting = async (data) => {
+    const runnerRef = db.collection('runner').doc(event.source.userId);
+    const doc = await runnerRef.get();
+    if (!doc.exists) {
+        reply(event.replyToken, 'คุณยังไม่ได้ทำการลงทะเบียนเป็นนักวิ่ง');
+    } else {
+        console.log('Document data:', doc.data());
+        let runner_db = doc.data();
+        db.collection("counting").add({
+            date: data.date,
+            step: data.step,
+            team: runner_db.team,
+            name: runner_db.name,
+        }).then(function () {
+            reply(event.replyToken, `ได้ทำการบันทึกจำนวน ${data.step} ก้าวของวันที่ ${data.date} เรียบร้อยแล้ว`)
+        }).catch(err => {
+            console.log(err)
+            reply(event.replyToken, 'การบันทึกมีปัญหา');
+        });
+    }
+
+    return true
+};
 
 const reply = (to, text_reply) => {
     return axios({
