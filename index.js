@@ -30,12 +30,12 @@ app.post('/lineBot', (req, res) => {
                 let step = parseInt(textArray[1]);
                 console.log(step)
                 if (Number.isInteger(step)) {
-                    quickConfirm(event.replyToken, step.toString(),"step");
+                    quickConfirm(event.replyToken, step.toString(), "step");
                 } else {
                     reply(event.replyToken, "กรุณากรอก `step จำนวนก้าว` ครับ");
                 }
             } else if (textArray[0] === "add" || textArray[0] === "Add") {
-                quickConfirm(event.replyToken, textArray[1],"add")
+                quickConfirm(event.replyToken, textArray[1], "add")
             } else if (textArray[0] === "report" || textArray[0] === "Report") {
                 reply(event.replyToken, textArray[0])
             }
@@ -175,29 +175,29 @@ const quickConfirm = (to, text_reply, channel) => {
             ]
         }
     } else if (channel === 'add') {
-        {
-            quick_item = {
-                items: getTeam()
-            }
+
+        quick_item = {
+            items: getTeam()
         }
+    }
 
 
-        return axios({
-            method: "post",
-            url: `${LINE_MESSAGING_API}/reply`,
-            headers: LINE_HEADER,
-            data: JSON.stringify({
-                replyToken: to,
-                messages: [
-                    {
-                        type: "text",
-                        text: `คุณต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`,
-                        quickReply: quick_item
-                    }
-                ]
-            })
+    return axios({
+        method: "post",
+        url: `${LINE_MESSAGING_API}/reply`,
+        headers: LINE_HEADER,
+        data: JSON.stringify({
+            replyToken: to,
+            messages: [
+                {
+                    type: "text",
+                    text: `คุณต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`,
+                    quickReply: quick_item
+                }
+            ]
         })
-    };
-}
+    })
+};
 
-    app.listen(PORT)
+
+app.listen(PORT)
