@@ -22,11 +22,11 @@ app.post('/lineBot', (req, res) => {
     console.log(event.source)
     switch (event.type) {
         case 'message':
-            // step 10000
             let textArray = event.message.text;
             textArray = textArray.split(" ");
             console.log(textArray)
             if (textArray[0] === "step" || textArray[0] === "Step") {
+                // step 10000
                 let step = parseInt(textArray[1]);
                 console.log(step)
                 if (Number.isInteger(step)) {
@@ -35,6 +35,7 @@ app.post('/lineBot', (req, res) => {
                     reply(event.replyToken, "กรุณากรอก `step จำนวนก้าว` ครับ");
                 }
             } else if (textArray[0] === "add" || textArray[0] === "Add") {
+                // add name
                 quickConfirm(event.replyToken, textArray[1], "add")
             } else if (textArray[0] === "report" || textArray[0] === "Report") {
                 reply(event.replyToken, textArray[0])
@@ -78,7 +79,7 @@ const callDate = (date) => {
     return `${timer.format('DD/MM/YYYY')}`
 };
 
-const getTeam = () => {
+const getTeam = (text_reply) => {
     const team_name = ['1', '2', '3', '4', '5', '6']
     let all_team_json = [];
     team_name.forEach(name => {
@@ -174,9 +175,8 @@ const quickConfirm = (to, text_reply, channel) => {
             ]
         }
     } else if (channel === 'add') {
-
         quick_item = {
-            items: getTeam()
+            items: getTeam(text_reply)
         }
     }
 
