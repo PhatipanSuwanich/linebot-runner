@@ -25,7 +25,7 @@ moment.locale('th')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.post('/lineBot', (req, res) => {
+app.post('/lineBot', async (req, res) => {
     // console.log(req.body)
     let event = req.body.events[0];
     console.log(event.source)
@@ -55,25 +55,25 @@ app.post('/lineBot', (req, res) => {
             let data = JSON.parse(event.postback.data)
             if (data.channel === 'step') {
                 const runnerRef = db.collection('runner').doc(event.source.userId);
-                runnerRef.get().then(snapshot => {
-                    if (snapshot.empty) {
-                        reply(event.replyToken, 'คุณยังไม่ได้ทำการลงทะเบียนเป็นนักวิ่ง');
-                        return;
-                    }
-                    console.log('Document data:', snapshot.data());
-
+                runnerRef.get()
+                const doc = await cityRef.get();
+                if (!doc.exists) {
+                    reply(event.replyToken, 'คุณยังไม่ได้ทำการลงทะเบียนเป็นนักวิ่ง');
+                } else {
+                    console.log('Document data:', doc.data());
+                    let runner_db = doc.data();
                     db.collection("counting").add({
                         date: data.date,
                         step: data.step,
-                        team: name_team,
-                        name: name_runner,
+                        team: runner_db.team,
+                        name: runner_db.name,
                     }).then(function () {
                         reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
                     }).catch(err => {
                         console.log(err)
                         reply(event.replyToken, 'การบันทึกมีปัญหา');
                     });
-                });
+                }
             } else if (data.channel === 'team') {
                 console.log(event.postback.data)
                 db.collection("runner").doc(event.source.userId).set({
