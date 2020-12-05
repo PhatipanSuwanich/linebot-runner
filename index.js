@@ -2,6 +2,15 @@ const express = require('express')
 const axios = require('axios');
 const bodyParser = require('body-parser')
 const app = express()
+const admin = require('firebase-admin');
+
+const serviceAccount = require('../linebot-runner/config/linebot-runner-firebase-adminsdk-nybvm-2de4d3c017.json');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
 
 const PORT = process.env.PORT || 8080
 
@@ -47,7 +56,9 @@ app.post('/lineBot', (req, res) => {
             if (data.channel === 'step') {
                 reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
             } else if (data.channel === 'team') {
-                reply(event.replyToken, `${data.team} ได้รับคุณ ${data.name} เข้าทีมแล้ว`)
+                console.log(event.postback.data)
+                db.collection("runner").add(event.postback.data);
+                reply(event.replyToken, `${data.team}ได้รับคุณ${data.name}เข้าทีมแล้ว`)
             }
         default:
             break;
@@ -97,7 +108,7 @@ const getTeam = (text_reply) => {
                     name: text_reply,
                     channel: "team"
                 }),
-                displayText: `ขอเข้า ${name} หน่อยนะ`
+                displayText: `ขอเข้า${name}หน่อยนะ`
             }
         })
     });
