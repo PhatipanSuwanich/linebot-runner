@@ -54,7 +54,7 @@ app.post('/lineBot', async (req, res) => {
             console.log(event.postback)
             let data = JSON.parse(event.postback.data)
             if (data.channel === 'step') {
-                await addToCounting(data)
+                await addToCounting(data,event)
             } else if (data.channel === 'team') {
                 console.log(event.postback.data)
                 db.collection("runner").doc(event.source.userId).set({
@@ -75,7 +75,7 @@ app.post('/lineBot', async (req, res) => {
     res.sendStatus(200)
 })
 
-const addToCounting = async (data) => {
+const addToCounting = async (data,event) => {
     const runnerRef = db.collection('runner').doc(event.source.userId);
     const doc = await runnerRef.get();
     if (!doc.exists) {
