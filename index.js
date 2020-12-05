@@ -57,7 +57,12 @@ app.post('/lineBot', (req, res) => {
                 reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
             } else if (data.channel === 'team') {
                 console.log(event.postback.data)
-                db.collection("runner").add(event.postback.data);
+                db.collection("runner").add({
+                    team: data.team,
+                    name: data.name,
+                    line: event.source.userId,
+                    group: event.source.groupId
+                });
                 reply(event.replyToken, `${data.team}ได้รับคุณ${data.name}เข้าทีมแล้ว`)
             }
         default:
