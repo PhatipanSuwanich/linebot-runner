@@ -129,7 +129,7 @@ const quickConfirm = (to, text_reply) => {
             messages: [
                 {
                     type: "text",
-                    text: "Hello Quick Reply!",
+                    text: `คุณต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`,
                     quickReply: {
                         items: [
                             {
