@@ -41,7 +41,6 @@ app.post('/lineBot', (req, res) => {
             }
             break;
         case 'postback':
-            console.log(JSON.parse(req.body))
             console.log(event.postback)
             let data = JSON.parse(event.postback.data)
             reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
