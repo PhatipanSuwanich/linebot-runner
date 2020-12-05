@@ -19,6 +19,7 @@ app.use(bodyParser.json())
 app.post('/lineBot', (req, res) => {
     console.log(req.body)
     let event = req.body.events[0];
+    console.log(event.source)
     switch (event.type) {
         case 'message':
             // step 10000
@@ -64,15 +65,13 @@ const reply = (to, text_reply) => {
 
 const callDate = (date) => {
     let timer = moment().tz("Asia/Bangkok");
-    console.log(timer.format('DD MM YYYY'))
     if (date === "เมื่อวาน") {
         timer.subtract(1, 'days').calendar();
     } else if (date === "วันนี้") {
         timer.calendar();
     }
-    console.log(timer.format('DD MM YYYY'))
 
-    return `ทำการบันทึก ${timer.format('DD MM YYYY')}`
+    return `ทำการบันทึก ${timer.format('DD/MM/YYYY')}`
 };
 
 const confirmMessage = (to, text_reply) => {
@@ -88,7 +87,7 @@ const confirmMessage = (to, text_reply) => {
                     altText: "This is a confirm template",
                     template: {
                         type: "confirm",
-                        text: `ต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`,
+                        text: `คุณต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`,
                         actions: [
                             {
                                 type: "postback",
