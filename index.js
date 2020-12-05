@@ -44,7 +44,11 @@ app.post('/lineBot', (req, res) => {
         case 'postback':
             console.log(event.postback)
             let data = JSON.parse(event.postback.data)
-            reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
+            if (data.channel === 'step') {
+                reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
+            } else if (data.channel === 'team') {
+                reply(event.replyToken, `${data.team} ได้รับคุณ ${data.name} เข้าทีมแล้ว`)
+            }
         default:
             break;
     }
@@ -80,24 +84,23 @@ const callDate = (date) => {
 };
 
 const getTeam = (text_reply) => {
-    const team_name = ['1', '2', '3', '4', '5', '6']
+    const team_name = ['ทีมพี่พร', 'ทีมพี่กมล', 'ทีมพี่ปุ้ม', 'ทีมพี่เล็ก', 'ทีมพี่ตั้ว', 'ทีมพี่เอ้']
     let all_team_json = [];
     team_name.forEach(name => {
         all_team_json.push({
             type: "action",
             action: {
                 type: "postback",
-                label: `Team-${name}`,
+                label: `${name}`,
                 data: JSON.stringify({
-                    team: `Team-${name}`,
+                    team: `${name}`,
                     name: text_reply,
+                    channel: "team"
                 }),
-                displayText: `ขอเข้าทีม ${name} หน่อยนะ`
+                displayText: `ขอเข้า ${name} หน่อยนะ`
             }
         })
     });
-
-    console.log(all_team_json)
 
     return all_team_json;
 };
@@ -144,8 +147,9 @@ const confirmMessage = (to, text_reply) => {
 };
 
 const quickConfirm = (to, text_reply, channel) => {
-    let quick_item
+    let quick_item, quick_ask
     if (channel === 'step') {
+        quick_ask = `คุณต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`
         quick_item = {
             items: [
                 {
@@ -156,6 +160,7 @@ const quickConfirm = (to, text_reply, channel) => {
                         data: JSON.stringify({
                             date: `${callDate("วันนี้")}`,
                             step: text_reply,
+                            channel: channel,
                         }),
                         displayText: "นับก้าวของวันนี้"
                     }
@@ -168,6 +173,7 @@ const quickConfirm = (to, text_reply, channel) => {
                         data: JSON.stringify({
                             date: `${callDate("เมื่อวาน")}`,
                             step: text_reply,
+                            channel: channel,
                         }),
                         displayText: "นับก้าวของเมื่อวาน"
                     }
@@ -175,6 +181,7 @@ const quickConfirm = (to, text_reply, channel) => {
             ]
         }
     } else if (channel === 'add') {
+        quick_ask = `คุณ ${text_reply} ต้องการขอเข้าทีมไหนครับ`
         quick_item = {
             items: getTeam(text_reply)
         }
@@ -190,7 +197,7 @@ const quickConfirm = (to, text_reply, channel) => {
             messages: [
                 {
                     type: "text",
-                    text: `คุณต้องการให้บันทึก ${text_reply} ก้าวของวันไหน?`,
+                    text: quick_ask,
                     quickReply: quick_item
                 }
             ]
