@@ -54,16 +54,39 @@ app.post('/lineBot', (req, res) => {
             console.log(event.postback)
             let data = JSON.parse(event.postback.data)
             if (data.channel === 'step') {
-                reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
+                const runnerRef = db.collection('runner').doc(event.source.userId);
+                runnerRef.get().then(snapshot => {
+                    if (snapshot.empty) {
+                        reply(event.replyToken, 'คุณยังไม่ได้ทำการลงทะเบียนเป็นนักวิ่ง');
+                        return;
+                    }
+                    console.log('Document data:', snapshot.data());
+
+                    db.collection("counting").add({
+                        date: data.date,
+                        step: data.step,
+                        team: name_team,
+                        name: name_runner,
+                    }).then(function () {
+                        reply(event.replyToken, `วันที่ ${data.date} ได้ทำการบันทึกจำนวน ${data.step} ก้าวแล้ว`)
+                    }).catch(err => {
+                        console.log(err)
+                        reply(event.replyToken, 'การบันทึกมีปัญหา');
+                    });
+                });
             } else if (data.channel === 'team') {
                 console.log(event.postback.data)
-                db.collection("runner").add({
+                db.collection("runner").doc(event.source.userId).set({
                     team: data.team,
                     name: data.name,
                     line: event.source.userId,
-                    group: event.source.groupId
+                }).then(function () {
+                    reply(event.replyToken, `${data.team}ได้รับคุณ${data.name}เข้าทีมแล้ว`)
+                }).catch(err => {
+                    console.log(err)
+                    reply(event.replyToken, 'การบันทึกมีปัญหา');
                 });
-                reply(event.replyToken, `${data.team}ได้รับคุณ${data.name}เข้าทีมแล้ว`)
+
             }
         default:
             break;
