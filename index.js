@@ -51,7 +51,7 @@ app.post('/lineBot', async (req, res) => {
                 const querySnapshot = await db.collection('counting').where('team', '==', 'ทีมพี่กมล').where('date', '==', callDate("วันนี้")).get();
                 querySnapshot.forEach((doc) => {
                     console.log(doc.id, ' => ', doc.data())
-                    text_reply.push(`${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`)
+                    text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
                 });
                 console.log(text_reply)
                 reply(event.replyToken,text_reply)
