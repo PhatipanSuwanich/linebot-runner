@@ -152,7 +152,7 @@ const getTeamReport = async (text_date, event) => {
             let step = parseFloat(doc.data().step)
             sum_step += step
             text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
-            ++round
+            round += 1;
         });
         let average = sum_step/round;
         text_reply += `ผลรวมทีมเดินไป ${average} ก้าว`
