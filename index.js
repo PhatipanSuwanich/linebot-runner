@@ -120,7 +120,7 @@ const addToCounting = async (data, event) => {
         } else {
             countingSnapshot.forEach((doc) => {
                 console.log(doc.id, ' => ', doc.data())
-                db.collection("counting").doc(doc.id).set({
+                db.collection("counting").doc(doc.id).update({
                     date: callDate(data.date),
                     step: data.step,
                 }).then(function () {
