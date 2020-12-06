@@ -145,11 +145,11 @@ const getTeamReport = async (text_date, event) => {
         console.log('Document data:', doc.data());
         let runner_db = doc.data();
         let text_reply = `วันนี้ ${callDate(text_date)}\n`;
-        let sum_step,round = 0;
+        let sum_step,round = 0.0;
         const querySnapshot = await db.collection('counting').where('team', '==', runner_db.team).where('date', '==', callDate(text_date)).get();
         querySnapshot.forEach((doc) => {
             console.log(doc.id, ' => ', doc.data())
-            let step = parseInt(doc.data().step)
+            let step = parseFloat(doc.data().step)
             sum_step += step
             text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
             round++
