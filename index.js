@@ -47,14 +47,44 @@ app.post('/lineBot', async (req, res) => {
                 // add name
                 quickConfirm(event.replyToken, textArray[1], "add")
             } else if (textArray[0] === "report" || textArray[0] === "Report") {
-                let text_reply = `วันนี้ ${callDate("วันนี้")}\n`;
-                const querySnapshot = await db.collection('counting').where('team', '==', 'ทีมพี่กมล').where('date', '==', callDate("วันนี้")).get();
-                querySnapshot.forEach((doc) => {
-                    console.log(doc.id, ' => ', doc.data())
-                    text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
-                });
-                console.log(text_reply)
-                reply(event.replyToken,text_reply)
+                // let text_reply = `วันนี้ ${callDate("วันนี้")}\n`;
+                // let sum_step = 0;
+                // const querySnapshot = await db.collection('counting').where('team', '==', 'ทีมพี่กมล').where('date', '==', callDate("วันนี้")).get();
+                // querySnapshot.forEach((doc) => {
+                //     console.log(doc.id, ' => ', doc.data())
+                //     let step = parseInt(doc.data().step)
+                //     sum_step += step
+                //     text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
+                // });
+                // text_reply += `ผลรวมทีมเดินไป ${sum_step} ก้าว`
+                // reply(event.replyToken,text_reply)
+            } else if (textArray[0] === "myteam" || textArray[0] === "Myteam") {
+                // myteam now , past
+                let text_date;
+                if (textArray[1] === "now" || textArray[1] === "Now") {
+                    text_date = "วันนี้"
+                } else if (textArray[1] === "past" || textArray[1] === "Past"){
+                    text_date = "เมื่อวาน"
+                }
+                const runnerRef = db.collection('runner').doc(event.source.userId);
+                const doc = await runnerRef.get();
+                if (!doc.exists) {
+                    reply(event.replyToken, 'คุณยังไม่ได้ทำการลงทะเบียนเป็นนักวิ่ง');
+                } else {
+                    console.log('Document data:', doc.data());
+                    let runner_db = doc.data();
+                    let text_reply = `วันนี้ ${callDate("วันนี้")}\n`;
+                    let sum_step = 0;
+                    const querySnapshot = await db.collection('counting').where('team', '==', runner_db.team).where('date', '==', callDate(text_date)).get();
+                    querySnapshot.forEach((doc) => {
+                        console.log(doc.id, ' => ', doc.data())
+                        let step = parseInt(doc.data().step)
+                        sum_step += step
+                        text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
+                    });
+                    text_reply += `ผลรวมทีมเดินไป ${sum_step} ก้าว`
+                    reply(event.replyToken, text_reply)
+                }
             }
             break;
         case 'postback':
