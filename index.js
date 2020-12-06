@@ -60,8 +60,10 @@ app.post('/lineBot', async (req, res) => {
                 // reply(event.replyToken,text_reply)
             } else if (textArray[0] === "myteam" || textArray[0] === "Myteam") {
                 // myteam past
-                let text_date = "วันนี้";
-                if (textArray[1] === "past" && textArray[1] !== undefined){
+                let text_date;
+                if (textArray[1] === undefined) {
+                    text_date = "วันนี้"
+                } else if (textArray[1] === "past" && ){
                     text_date = "เมื่อวาน"
                 } else {
                     reply(event.replyToken, "กรุณากรอก `myteam past` เพื่อดูจำนวนก้าวของเมื่อวานครับ");
