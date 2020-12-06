@@ -59,12 +59,12 @@ app.post('/lineBot', async (req, res) => {
                 // text_reply += `ผลรวมทีมเดินไป ${sum_step} ก้าว`
                 // reply(event.replyToken,text_reply)
             } else if (textArray[0] === "myteam" || textArray[0] === "Myteam") {
-                // myteam now , past
-                let text_date;
-                if (textArray[1] === "now" || textArray[1] === "Now") {
-                    text_date = "วันนี้"
-                } else if (textArray[1] === "past" || textArray[1] === "Past"){
+                // myteam past
+                let text_date = "วันนี้";
+                if (textArray[1] === "past" || textArray[1] === "Past"){
                     text_date = "เมื่อวาน"
+                } else {
+                    reply(event.replyToken, "กรุณากรอก `myteam past` เพื่อดูจำนวนก้าวของเมื่อวานครับ");
                 }
                 const runnerRef = db.collection('runner').doc(event.source.userId);
                 const doc = await runnerRef.get();
@@ -73,7 +73,7 @@ app.post('/lineBot', async (req, res) => {
                 } else {
                     console.log('Document data:', doc.data());
                     let runner_db = doc.data();
-                    let text_reply = `วันนี้ ${callDate("วันนี้")}\n`;
+                    let text_reply = `วันนี้ ${callDate(text_date)}\n`;
                     let sum_step = 0;
                     const querySnapshot = await db.collection('counting').where('team', '==', runner_db.team).where('date', '==', callDate(text_date)).get();
                     querySnapshot.forEach((doc) => {
