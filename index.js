@@ -155,6 +155,7 @@ const getTeamReport = async (text_date, event) => {
             round += 1;
         });
         console.log(round)
+        console.log(sum_step)
         console.log(sum_step/round)
         let average = sum_step/round;
         text_reply += `ผลรวมทีมเดินไป ${average} ก้าว`
