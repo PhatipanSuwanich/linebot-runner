@@ -53,17 +53,16 @@ app.post('/lineBot', async (req, res) => {
                     quickConfirm(event.replyToken, textArray[1], "add")
                 }
             } else if (textArray[0] === "report" || textArray[0] === "Report") {
-                // let text_reply = `วันนี้ ${callDate("วันนี้")}\n`;
-                // let sum_step = 0;
-                // const querySnapshot = await db.collection('counting').where('team', '==', 'ทีมพี่กมล').where('date', '==', callDate("วันนี้")).get();
-                // querySnapshot.forEach((doc) => {
-                //     console.log(doc.id, ' => ', doc.data())
-                //     let step = parseInt(doc.data().step)
-                //     sum_step += step
-                //     text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
-                // });
-                // text_reply += `ผลรวมทีมเดินไป ${sum_step} ก้าว`
-                // reply(event.replyToken,text_reply)
+                // report past
+                let text_date;
+                if (textArray[1] === undefined) {
+                    text_date = "วันนี้"
+                } else if (textArray[1] === "past") {
+                    text_date = "เมื่อวาน"
+                } else {
+                    reply(event.replyToken, "กรุณากรอก `report past` เพื่อดูรายงานทุกทีมของเมื่อวานครับ");
+                }
+                getReport(text_date, event)
             } else if (textArray[0] === "myteam" || textArray[0] === "Myteam") {
                 // myteam past
                 let text_date;
@@ -100,6 +99,48 @@ app.post('/lineBot', async (req, res) => {
     }
     res.sendStatus(200)
 })
+
+const getReport = async (data, event) => {
+    let json = {
+        type: "bubble",
+        direction: "ltr",
+        body: {
+            type: "box",
+            layout: "vertical",
+            spacing: "md",
+            contents: [
+                {
+                    type: "text",
+                    text: `สรุปผลวันที่ ${callDate("เมื่อวาน")}`,
+                    weight: "bold",
+                    size: "xl",
+                },
+                {
+                    type: "box",
+                    layout: "vertical",
+                    spacing: "sm",
+                    contents: [
+                        {
+                            type: "box",
+                            layout: "baseline",
+                            contents: await getAllteam()
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+    
+    return axios({
+        method: "post",
+        url: `${LINE_MESSAGING_API}/reply`,
+        headers: LINE_HEADER,
+        data: JSON.stringify({
+            replyToken: to,
+            messages: json
+        })
+    })
+}
 
 const addToCounting = async (data, event) => {
     const runnerRef = db.collection('runner').doc(event.source.userId);
@@ -166,7 +207,7 @@ const getTeamReport = async (text_date, event) => {
         } else if (average > 10000) {
             average = 10000
         }
-        text_reply += `ผลรวม${runner_db.team}เดินไป ${average} ก้าว`
+        text_reply += `เฉลี่ย${runner_db.team}เดินไป ${average} ก้าว`
         reply(event.replyToken, text_reply)
     }
 }
@@ -216,6 +257,38 @@ const getTeam = (text_reply) => {
                 displayText: `ขอเข้า${name}หน่อยนะ`
             }
         })
+    });
+
+    return all_team_json;
+};
+
+const getAllteam = async () => {
+    let all_team_json = [];
+    const teamSnapshot = await db.collection('team').where('date', '==', callDate("เมื่อวาน")).get();
+    teamSnapshot.forEach((doc) => {
+        console.log(doc.id, ' => ', doc.data())
+        all_team_json.push(
+            {
+                type: "box",
+                layout: "baseline",
+                contents: [
+                    {
+                        type: "text",
+                        text: doc.data().name,
+                        weight: "bold",
+                        flex: 0,
+                        margin: "sm"
+                    },
+                    {
+                        type: "text",
+                        text: `${doc.data().sum_step} ก้าว`,
+                        size: "sm",
+                        color: "#AAAAAA",
+                        align: "end"
+                    }
+                ]
+            }
+        )
     });
 
     return all_team_json;
