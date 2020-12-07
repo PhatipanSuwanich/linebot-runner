@@ -44,8 +44,14 @@ app.post('/lineBot', async (req, res) => {
                     reply(event.replyToken, "กรุณากรอก `step จำนวนก้าว` ครับ");
                 }
             } else if (textArray[0] === "add" || textArray[0] === "Add") {
-                // add name
-                quickConfirm(event.replyToken, textArray[1], "add")
+                const runnerRef = db.collection('runner').doc(event.source.userId);
+                const runnerDoc = await runnerRef.get();
+                if (runnerDoc.exists) {
+                    reply(event.replyToken, 'คุณเคยลงทะเบียนเป็นนักวิ่งแล้ว');
+                } else {
+                    // add name
+                    quickConfirm(event.replyToken, textArray[1], "add")
+                }
             } else if (textArray[0] === "report" || textArray[0] === "Report") {
                 // let text_reply = `วันนี้ ${callDate("วันนี้")}\n`;
                 // let sum_step = 0;
