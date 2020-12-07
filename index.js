@@ -290,7 +290,7 @@ const getAllteam = async (text_date) => {
             contents: [
                 {
                     type: "text",
-                    text: `สรุปผลวันที่ ${callDate("เมื่อวาน")}`,
+                    text: `สรุปผลวันที่ ${callDate(text_date)}`,
                     weight: "bold",
                     size: "xl",
                 },
