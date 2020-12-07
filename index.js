@@ -247,7 +247,7 @@ const getAllteam = async () => {
             contents: [
                 {
                     type: "text",
-                    text: doc.data().name,
+                    text: `${doc.data().name}`,
                     weight: "bold",
                     flex: 0,
                     margin: "sm"
@@ -281,7 +281,9 @@ const getAllteam = async () => {
                     type: "box",
                     layout: "vertical",
                     spacing: "sm",
-                    contents: all_team_json
+                    contents: [
+                        all_team_json
+                    ]
                 }
             ]
         }
@@ -289,6 +291,7 @@ const getAllteam = async () => {
 
     console.log(json)
     console.log(json.body.contents)
+    console.log(json.body.contents[1].contents)
 
     return json;
 };
