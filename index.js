@@ -110,7 +110,7 @@ const getReport = async (data, event) => {
             messages: [{
                 type: "flex",
                 altText: "Report Step",
-                contents: getAllteam()
+                contents: await getAllteam()
             }]
         })
     })
