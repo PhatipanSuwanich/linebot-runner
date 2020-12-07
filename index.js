@@ -183,7 +183,7 @@ const getTeamReport = async (text_date, event) => {
             average = 10000
         }
         text_reply += `เฉลี่ย${runner_db.team}เดินไป ${average} ก้าว`
-        await addToTeamReport(text_date, runner_db.team, average)
+        addToTeamReport(text_date, runner_db.team, average)
         reply(event.replyToken, text_reply)
     }
 }
@@ -206,16 +206,32 @@ const reply = (to, text_reply) => {
 };
 
 const addToTeamReport = (text_date, team_name, average) => {
-    db.collection("team").add({
-        date: callDate(text_date),
-        name: team_name,
-        sum_step: average,
-    }).then(function () {
-        return true;
-    }).catch(err => {
-        console.log(err)
-        return false
-    });
+    const teamSnapshot = db.collection('team').where('name', '==', team_name).where('date', '==', callDate(text_date)).get();
+        if (teamSnapshot.empty) {
+            db.collection("team").add({
+                date: callDate(text_date),
+                name: team_name,
+                sum_step: average,
+            }).then(function () {
+                return true;
+            }).catch(err => {
+                console.log(err)
+                return false
+            });
+        } else {
+            teamSnapshot.forEach((doc) => {
+                console.log(doc.id, ' => ', doc.data())
+                db.collection("counting").doc(doc.id).update({
+                    sum_step: average,
+                }).then(function () {
+                    return true;
+                }).catch(err => {
+                    console.log(err)
+                    return false
+                });
+            });
+        }
+    
 };
 
 
