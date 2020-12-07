@@ -150,7 +150,11 @@ const getTeamReport = async (text_date, event) => {
         querySnapshot.forEach((doc) => {
             console.log(doc.id, ' => ', doc.data())
             let step = parseInt(doc.data().step)
+            console.log(sum_step)
+            console.log(step)
+            console.log(parseInt(doc.data().step))
             sum_step += step
+            console.log(sum_step)
             text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
             round += 1;
         });
