@@ -107,11 +107,57 @@ const getReport = async (data, event) => {
         headers: LINE_HEADER,
         data: JSON.stringify({
             replyToken: event.replyToken,
-            messages: [{
-                type: "flex",
-                altText: "Report Step",
-                contents: await getAllteam()
-            }]
+            messages: [
+                {
+                    "type": "flex",
+                    "altText": "Report Step",
+                    "contents": {
+                        "type": "bubble",
+                        "direction": "ltr",
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "md",
+                            "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "ผลสรุปวันที่",
+                                    "weight": "bold",
+                                    "size": "xl",
+                                    "contents": []
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "ทีมพี่พร",
+                                                    "weight": "bold",
+                                                    "flex": 0,
+                                                    "margin": "sm"
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": "10000 ก้าว",
+                                                    "size": "sm",
+                                                    "color": "#AAAAAA",
+                                                    "align": "end"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
         })
     })
 }
