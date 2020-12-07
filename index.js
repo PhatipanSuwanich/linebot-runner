@@ -36,9 +36,9 @@ app.post('/lineBot', async (req, res) => {
             console.log(textArray)
             if (textArray[0] === "step" || textArray[0] === "Step") {
                 // step 10000
-                let step = parseInt(textArray[1]);
+                let step = parseFloat(textArray[1]);
                 console.log(step)
-                if (Number.isInteger(step)) {
+                if (Number.isNaN(step)) {
                     quickConfirm(event.replyToken, step.toString(), "step");
                 } else {
                     reply(event.replyToken, "กรุณากรอก `step จำนวนก้าว` ครับ");
@@ -142,7 +142,7 @@ const addToCounting = async (data, event) => {
         } else {
             countingSnapshot.forEach((doc) => {
                 console.log(doc.id, ' => ', doc.data())
-                db.collection("counting").doc(doc.id).set({
+                db.collection("counting").doc(doc.id).update({
                     date: callDate(data.date),
                     step: data.step,
                 }).then(function () {
