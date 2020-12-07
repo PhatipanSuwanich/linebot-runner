@@ -136,7 +136,7 @@ const getReport = async (data, event) => {
         url: `${LINE_MESSAGING_API}/reply`,
         headers: LINE_HEADER,
         data: JSON.stringify({
-            replyToken: to,
+            replyToken: event.replyToken,
             messages: json
         })
     })
