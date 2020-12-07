@@ -281,9 +281,7 @@ const getAllteam = async () => {
                     type: "box",
                     layout: "vertical",
                     spacing: "sm",
-                    contents: [
-                        all_team_json
-                    ]
+                    contents: all_team_json
                 }
             ]
         }
