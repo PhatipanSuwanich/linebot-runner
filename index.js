@@ -221,7 +221,7 @@ const addToTeamReport = async (text_date, team_name, average) => {
         } else {
             teamSnapshot.forEach((doc) => {
                 console.log(doc.id, ' => ', doc.data())
-                db.collection("counting").doc(doc.id).update({
+                db.collection("team").doc(doc.id).update({
                     sum_step: average,
                 }).then(function () {
                     return true;
