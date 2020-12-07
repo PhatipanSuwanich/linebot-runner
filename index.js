@@ -167,11 +167,11 @@ const getTeamReport = async (text_date, event) => {
         console.log('Document data:', doc.data());
         let runner_db = doc.data();
         let text_reply = `วันที่ ${callDate(text_date)}\n`;
-        let sum_step = 0, round = 0;
+        let sum_step = 0.00, round = 0;
         const querySnapshot = await db.collection('counting').where('team', '==', runner_db.team).where('date', '==', callDate(text_date)).get();
         querySnapshot.forEach((doc) => {
             console.log(doc.id, ' => ', doc.data())
-            let step = parseInt(doc.data().step)
+            let step = parseFloat(doc.data().step)
             sum_step += step
             text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
             round += 1;
@@ -183,6 +183,7 @@ const getTeamReport = async (text_date, event) => {
             average = 10000
         }
         text_reply += `เฉลี่ย${runner_db.team}เดินไป ${average} ก้าว`
+        await addToTeamReport(text_date, runner_db.team, average)
         reply(event.replyToken, text_reply)
     }
 }
@@ -203,6 +204,20 @@ const reply = (to, text_reply) => {
         })
     });
 };
+
+const addToTeamReport = (text_date, team_name, average) => {
+    db.collection("team").add({
+        date: callDate(text_date),
+        name: team_name,
+        sum_step: average,
+    }).then(function () {
+        return true;
+    }).catch(err => {
+        console.log(err)
+        return false
+    });
+};
+
 
 const callDate = (date) => {
     let timer = moment().tz("Asia/Bangkok");
@@ -239,8 +254,8 @@ const getTeam = (text_reply) => {
 
 const getAllteam = async (text_date) => {
     let all_team_json = [];
-    const teamRef =  db.collection('team')
-    const teamRes = await teamRef.where('date', '==', callDate(text_date)).orderBy('sum_step','asc').get();
+    const teamRef = db.collection('team')
+    const teamRes = await teamRef.where('date', '==', callDate(text_date)).get();
     teamRes.forEach((doc) => {
         console.log(doc.id, ' => ', doc.data())
         all_team_json.push({
