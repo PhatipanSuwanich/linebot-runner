@@ -62,6 +62,7 @@ app.post('/lineBot', async (req, res) => {
                 } else {
                     reply(event.replyToken, "กรุณากรอก `report past` เพื่อดูรายงานทุกทีมของเมื่อวานครับ");
                 }
+                console.log(text_date)
                 getReport(text_date, event)
             } else if (textArray[0] === "myteam" || textArray[0] === "Myteam") {
                 // myteam past
@@ -239,7 +240,7 @@ const getTeam = (text_reply) => {
 const getAllteam = async (text_date) => {
     let all_team_json = [];
     const teamRef =  db.collection('team')
-    const teamRes = await teamRef.where('date', '==', callDate(text_date)).orderBy('sum_step').get();
+    const teamRes = await teamRef.where('date', '==', callDate(text_date)).orderBy('sum_step','asc').get();
     teamRes.forEach((doc) => {
         console.log(doc.id, ' => ', doc.data())
         all_team_json.push({
