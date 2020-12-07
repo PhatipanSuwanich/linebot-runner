@@ -68,7 +68,7 @@ app.post('/lineBot', async (req, res) => {
                 } else {
                     reply(event.replyToken, "กรุณากรอก `myteam past` เพื่อดูจำนวนก้าวของเมื่อวานครับ");
                 }
-                getTeamReport(text_date,event)
+                getTeamReport(text_date, event)
             }
             break;
         case 'postback':
@@ -112,7 +112,7 @@ const addToCounting = async (data, event) => {
                 team: runner_db.team,
                 name: runner_db.name,
             }).then(function () {
-                getTeamReport(data.date,event)
+                getTeamReport(data.date, event)
             }).catch(err => {
                 console.log(err)
                 reply(event.replyToken, 'การบันทึกมีปัญหา');
@@ -124,7 +124,7 @@ const addToCounting = async (data, event) => {
                     date: callDate(data.date),
                     step: data.step,
                 }).then(function () {
-                    getTeamReport(data.date,event)
+                    getTeamReport(data.date, event)
                 }).catch(err => {
                     console.log(err)
                     reply(event.replyToken, 'การบันทึกมีปัญหา');
@@ -145,22 +145,21 @@ const getTeamReport = async (text_date, event) => {
         console.log('Document data:', doc.data());
         let runner_db = doc.data();
         let text_reply = `วันนี้ ${callDate(text_date)}\n`;
-        let sum_step = 0 ,round = 0;
+        let sum_step = 0, round = 0;
         const querySnapshot = await db.collection('counting').where('team', '==', runner_db.team).where('date', '==', callDate(text_date)).get();
         querySnapshot.forEach((doc) => {
             console.log(doc.id, ' => ', doc.data())
             let step = parseInt(doc.data().step)
-            console.log(sum_step)
-            console.log(step)
-            console.log(parseInt(doc.data().step))
             sum_step += step
-            console.log(sum_step)
             text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
             round += 1;
         });
-        console.log(round)
-        console.log(sum_step)
-        let average = sum_step/round;
+        let average = sum_step / round;
+        if (isNaN(average)) {
+            average = 0
+        } else if (average > 10000) {
+            average = 10000
+        }
         text_reply += `ผลรวมทีมเดินไป ${average} ก้าว`
         reply(event.replyToken, text_reply)
     }
