@@ -241,28 +241,26 @@ const getAllteam = async () => {
     const teamSnapshot = await db.collection('team').where('date', '==', callDate("เมื่อวาน")).get();
     teamSnapshot.forEach((doc) => {
         console.log(doc.id, ' => ', doc.data())
-        all_team_json.push(
-            {
-                type: "box",
-                layout: "baseline",
-                contents: [
-                    {
-                        type: "text",
-                        text: doc.data().name,
-                        weight: "bold",
-                        flex: 0,
-                        margin: "sm"
-                    },
-                    {
-                        type: "text",
-                        text: `${doc.data().sum_step} ก้าว`,
-                        size: "sm",
-                        color: "#AAAAAA",
-                        align: "end"
-                    }
-                ]
-            }
-        )
+        all_team_json.push({
+            type: "box",
+            layout: "baseline",
+            contents: [
+                {
+                    type: "text",
+                    text: doc.data().name,
+                    weight: "bold",
+                    flex: 0,
+                    margin: "sm"
+                },
+                {
+                    type: "text",
+                    text: `${doc.data().sum_step} ก้าว`,
+                    size: "sm",
+                    color: "#AAAAAA",
+                    align: "end"
+                }
+            ]
+        })
     });
 
     let json = {
@@ -292,7 +290,7 @@ const getAllteam = async () => {
     }
 
     console.log(json)
-    console.log(json.contents)
+    console.log(json.body.contents)
 
     return json;
 };
