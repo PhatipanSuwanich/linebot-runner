@@ -183,7 +183,7 @@ const getTeamReport = async (text_date, event) => {
             average = 10000
         }
         text_reply += `เฉลี่ย${runner_db.team}เดินไป ${average} ก้าว`
-        addToTeamReport(text_date, runner_db.team, average)
+        await addToTeamReport(text_date, runner_db.team, average)
         reply(event.replyToken, text_reply)
     }
 }
@@ -205,8 +205,8 @@ const reply = (to, text_reply) => {
     });
 };
 
-const addToTeamReport = (text_date, team_name, average) => {
-    const teamSnapshot = db.collection('team').where('name', '==', team_name).where('date', '==', callDate(text_date)).get();
+const addToTeamReport = async (text_date, team_name, average) => {
+    const teamSnapshot = await db.collection('team').where('name', '==', team_name).where('date', '==', callDate(text_date)).get();
         if (teamSnapshot.empty) {
             db.collection("team").add({
                 date: callDate(text_date),
