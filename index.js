@@ -38,7 +38,7 @@ app.post('/lineBot', async (req, res) => {
                 // step 10000
                 let step = parseFloat(textArray[1]);
                 console.log(step)
-                if (isNaN(step)) {
+                if (!isNaN(step)) {
                     quickConfirm(event.replyToken, step.toString(), "step");
                 } else {
                     reply(event.replyToken, "กรุณากรอก `step จำนวนก้าว` ครับ");
