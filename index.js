@@ -237,7 +237,7 @@ const getTeam = (text_reply) => {
 };
 
 const getAllteam = async () => {
-    let all_team_json;
+    let all_team_json = [];
     const teamSnapshot = await db.collection('team').where('date', '==', callDate("เมื่อวาน")).get();
     teamSnapshot.forEach((doc) => {
         console.log(doc.id, ' => ', doc.data())
@@ -281,9 +281,7 @@ const getAllteam = async () => {
                     type: "box",
                     layout: "vertical",
                     spacing: "sm",
-                    contents: [
-                        all_team_json
-                    ]
+                    contents: all_team_json
                 }
             ]
         }
