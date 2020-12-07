@@ -101,43 +101,17 @@ app.post('/lineBot', async (req, res) => {
 })
 
 const getReport = async (data, event) => {
-    let json = {
-        type: "bubble",
-        direction: "ltr",
-        body: {
-            type: "box",
-            layout: "vertical",
-            spacing: "md",
-            contents: [
-                {
-                    type: "text",
-                    text: `สรุปผลวันที่ ${callDate("เมื่อวาน")}`,
-                    weight: "bold",
-                    size: "xl",
-                },
-                {
-                    type: "box",
-                    layout: "vertical",
-                    spacing: "sm",
-                    contents: [
-                        {
-                            type: "box",
-                            layout: "baseline",
-                            contents: await getAllteam()
-                        }
-                    ]
-                }
-            ]
-        }
-    }
-    
     return axios({
         method: "post",
         url: `${LINE_MESSAGING_API}/reply`,
         headers: LINE_HEADER,
         data: JSON.stringify({
             replyToken: event.replyToken,
-            messages: json
+            messages: {
+                type: "flex",
+                altText: "Report Step",
+                contents: await getAllteam()
+            }
         })
     })
 }
@@ -291,7 +265,39 @@ const getAllteam = async () => {
         )
     });
 
-    return all_team_json;
+    let json = {
+        type: "bubble",
+        direction: "ltr",
+        body: {
+            type: "box",
+            layout: "vertical",
+            spacing: "md",
+            contents: [
+                {
+                    type: "text",
+                    text: `สรุปผลวันที่ ${callDate("เมื่อวาน")}`,
+                    weight: "bold",
+                    size: "xl",
+                },
+                {
+                    type: "box",
+                    layout: "vertical",
+                    spacing: "sm",
+                    contents: [
+                        {
+                            type: "box",
+                            layout: "baseline",
+                            contents: all_team_json
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+    console.log(json)
+
+    return json;
 };
 
 const confirmMessage = (to, text_reply) => {
