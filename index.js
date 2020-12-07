@@ -100,7 +100,7 @@ app.post('/lineBot', async (req, res) => {
     res.sendStatus(200)
 })
 
-const getReport = async (data, event) => {
+const getReport = async (text_date, event) => {
     return axios({
         method: "post",
         url: `${LINE_MESSAGING_API}/reply`,
@@ -110,7 +110,7 @@ const getReport = async (data, event) => {
             messages: [{
                 type: "flex",
                 altText: "Report Step",
-                contents: await getAllteam()
+                contents: await getAllteam(text_date)
             }]
         })
     })
@@ -236,9 +236,9 @@ const getTeam = (text_reply) => {
     return all_team_json;
 };
 
-const getAllteam = async () => {
+const getAllteam = async (text_date) => {
     let all_team_json = [];
-    const teamSnapshot = await db.collection('team').where('date', '==', callDate("เมื่อวาน")).get();
+    const teamSnapshot = await db.collection('team').where('date', '==', callDate(text_date)).orderBy('sum_step').get();
     teamSnapshot.forEach((doc) => {
         console.log(doc.id, ' => ', doc.data())
         all_team_json.push({
@@ -287,11 +287,6 @@ const getAllteam = async () => {
         }
     }
 
-    console.log(json)
-    console.log(json.body.contents)
-    console.log(json.body.contents[1].contents)
-    console.log(json.body.contents[1].contents[0].contents)
-    console.log(json.body.contents[1].contents[1].contents)
     return json;
 };
 
