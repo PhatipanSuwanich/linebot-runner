@@ -107,11 +107,11 @@ const getReport = async (data, event) => {
         headers: LINE_HEADER,
         data: JSON.stringify({
             replyToken: event.replyToken,
-            messages: {
+            messages: [{
                 type: "flex",
                 altText: "Report Step",
                 contents: await getAllteam()
-            }
+            }]
         })
     })
 }
