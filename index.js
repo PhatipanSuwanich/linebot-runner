@@ -185,6 +185,7 @@ const getTeamReport = async (text_date, event) => {
         } else if (average > 10000) {
             average = 10000
         }
+        average = average.toFixed(2)
         text_reply += `เฉลี่ย${runner_db.team}เดินไป ${average} ก้าว`
         await addToTeamReport(text_date, runner_db.team, average)
         reply(event.replyToken, text_reply)
