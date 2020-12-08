@@ -172,6 +172,9 @@ const getTeamReport = async (text_date, event) => {
         querySnapshot.forEach((doc) => {
             console.log(doc.id, ' => ', doc.data())
             let step = parseFloat(doc.data().step)
+            if (step > 10000) {
+                step = 10000
+            }
             sum_step += step
             text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
             round += 1;
