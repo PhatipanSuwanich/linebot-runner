@@ -379,7 +379,7 @@ const quickConfirm = (to, text_reply, channel) => {
                         type: "postback",
                         label: "วันนี้",
                         data: JSON.stringify({
-                            date: `${callDate("วันนี้")}`,
+                            date: "วันนี้",
                             step: text_reply,
                             channel: channel,
                         }),
@@ -392,7 +392,7 @@ const quickConfirm = (to, text_reply, channel) => {
                         type: "postback",
                         label: "เมื่อวาน",
                         data: JSON.stringify({
-                            date: `${callDate("เมื่อวาน")}`,
+                            date: "เมื่อวาน",
                             step: text_reply,
                             channel: channel,
                         }),
