@@ -75,7 +75,7 @@ app.post('/lineBot', async (req, res) => {
                     reply(event.replyToken, "กรุณากรอก `myteam past` เพื่อดูจำนวนก้าวของเมื่อวานครับ");
                 }
                 getTeamReport(text_date, event)
-            }else if (textArray[0] === "game start") {
+            }else if (textArray[0] === "game_start") {
                 await everyOneStart(event)
             }
             break;
