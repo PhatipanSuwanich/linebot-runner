@@ -75,6 +75,8 @@ app.post('/lineBot', async (req, res) => {
                     reply(event.replyToken, "กรุณากรอก `myteam past` เพื่อดูจำนวนก้าวของเมื่อวานครับ");
                 }
                 getTeamReport(text_date, event)
+            }else if (textArray[0] === "game start") {
+                await everyOneStart(event)
             }
             break;
         case 'postback':
@@ -427,6 +429,27 @@ const quickConfirm = (to, text_reply, channel) => {
             ]
         })
     })
+};
+
+const everyOneStart = async (event) => {
+    const team_name = ['ทีมพี่กมล', 'ทีมพี่ปุ้ม']
+    team_name.forEach( async (team_name) => {
+        const countingSnapshot = await db.collection('runner').where('name', '==', team_name).get();
+        countingSnapshot.forEach((doc) => {
+            console.log(doc.id, ' => ', doc.data())
+            let runner_db = doc.data();
+            db.collection("counting").add({
+                date: callDate("วันนี้"),
+                step: 0,
+                team: team_name,
+                name: runner_db.name,
+            }).catch(err => {
+                console.log(err)
+                reply(event.replyToken, 'การบันทึกมีปัญหา');
+            });
+        });
+    });
+    getTeamReport("วันนี้", event)
 };
 
 
