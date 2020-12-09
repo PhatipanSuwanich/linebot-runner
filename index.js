@@ -440,7 +440,7 @@ const everyOneStart = async (event) => {
             let runner_db = doc.data();
             db.collection("counting").add({
                 date: callDate("วันนี้"),
-                step: 0,
+                step: "0",
                 team: team_name,
                 name: runner_db.name,
             }).catch(err => {
