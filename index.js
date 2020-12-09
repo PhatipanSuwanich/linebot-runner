@@ -167,6 +167,7 @@ const getTeamReport = async (text_date, event) => {
         console.log('Document data:', doc.data());
         let runner_db = doc.data();
         let text_reply = `วันที่ ${callDate(text_date)}\n`;
+        text_reply += `-----------------------------------------\n`
         let sum_step = 0.00, round = 0;
         const querySnapshot = await db.collection('counting').where('team', '==', runner_db.team).where('date', '==', callDate(text_date)).get();
         querySnapshot.forEach((doc) => {
@@ -186,6 +187,7 @@ const getTeamReport = async (text_date, event) => {
             average = 10000
         }
         average = average.toFixed(2)
+        text_reply += `-----------------------------------------\n`
         text_reply += `เฉลี่ย${runner_db.team}เดินไป ${average} ก้าว`
         await addToTeamReport(text_date, runner_db.team, average)
         reply(event.replyToken, text_reply)
