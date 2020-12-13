@@ -170,7 +170,7 @@ const getTeamReport = async (text_date, event) => {
         let runner_db = doc.data();
         let text_reply = `วันที่ ${callDate(text_date)}\n`;
         text_reply += `------------------------\n`
-        let sum_step = 0.00, round = 12;
+        let sum_step = 0.00, round = 0;
         const querySnapshot = await db.collection('counting').where('team', '==', runner_db.team).where('date', '==', callDate(text_date)).get();
         querySnapshot.forEach((doc) => {
             console.log(doc.id, ' => ', doc.data())
@@ -180,8 +180,9 @@ const getTeamReport = async (text_date, event) => {
             }
             sum_step += step
             text_reply += `${doc.data().name} เดินไป ${doc.data().step} ก้าว\n`
-            // round += 1;
+            round += 1;
         });
+        console.log(round)
         let average = sum_step / round;
         if (isNaN(average)) {
             average = 0
