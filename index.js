@@ -433,7 +433,8 @@ const quickConfirm = (to, text_reply, channel) => {
 };
 
 const everyOneStart = async (event) => {
-    const team_name = ['ทีมพี่กมล', 'ทีมพี่ปุ้ม']
+    // const team_name = ['ทีมพี่พร', 'ทีมพี่กมล', 'ทีมพี่ปุ้ม', 'ทีมพี่เล็ก', 'ทีมพี่ตั้ว', 'ทีมพี่เอ้']
+    const team_name = ['ทีมพี่กมล', 'ทีมพี่ปุ้ม', 'ทีมพี่ตั้ว']
     team_name.forEach( async (team_name) => {
         const countingSnapshot = await db.collection('runner').where('team', '==', team_name).get();
         countingSnapshot.forEach((doc) => {
